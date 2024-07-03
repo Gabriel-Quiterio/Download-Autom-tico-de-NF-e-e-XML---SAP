@@ -1,0 +1,75 @@
+Public Sub DataEmi()
+    Dim iTotalLinhas As Long
+    Dim i            As Long
+    Dim iHoje        As Date
+    
+    Planilha1.Select
+        
+    iTotalLinhas = Planilha1.Cells(Rows.Count, 1).End(xlUp).Row
+    
+    i = 2
+    
+        SAP Planilha1.Cells(i, 1).Value, Planilha1.Cells(i, 4).Value, Planilha1.Cells(i, 3).Value
+      
+    
+End Sub
+
+Sub SAP(ByVal lNF As String, ByVal lDataE As String, ByVal lCMes As String)
+Dim Application, SapGuiAuto, Connection, session, WScrip
+
+    
+If Not IsObject(Application) Then
+   Set SapGuiAuto = GetObject("SAPGUI")
+   Set Application = SapGuiAuto.GetScriptingEngine
+End If
+If Not IsObject(Connection) Then
+   Set Connection = Application.Children(0)
+End If
+If Not IsObject(session) Then
+   Set session = Connection.Children(0)
+End If
+If IsObject(WScript) Then
+   WScript.ConnectObject session, "on"
+   WScript.ConnectObject Application, "on"
+End If
+
+iTotalLinhas = Planilha1.Cells(Rows.Count, 1).End(xlUp).Row
+
+
+
+i = 2
+
+While i <= iTotalLinhas
+Nfs = Planilha1.Cells(i, 1)
+ANO = Planilha1.Cells(i, 4)
+MES = Planilha1.Cells(i, 3)
+session.findById("wnd[0]").maximize
+session.findById("wnd[0]/tbar[1]/btn[36]").press
+session.findById("wnd[0]/usr/cntlSINWP_CONTAINER/shellcont/shell/shellcont[0]/shell").expandNode "         18"
+session.findById("wnd[0]/usr/cntlSINWP_CONTAINER/shellcont/shell/shellcont[0]/shell").topNode = "          1"
+session.findById("wnd[0]/usr/cntlSINWP_CONTAINER/shellcont/shell/shellcont[0]/shell").expandNode "         35"
+session.findById("wnd[0]/usr/cntlSINWP_CONTAINER/shellcont/shell/shellcont[0]/shell").topNode = "          1"
+session.findById("wnd[0]/usr/cntlSINWP_CONTAINER/shellcont/shell/shellcont[0]/shell").expandNode "         " & ANO
+session.findById("wnd[0]/usr/cntlSINWP_CONTAINER/shellcont/shell/shellcont[0]/shell").topNode = "          1"
+session.findById("wnd[0]/usr/cntlSINWP_CONTAINER/shellcont/shell/shellcont[0]/shell").selectedNode = "         " & Planilha1.Cells(i, 3)
+session.findById("wnd[0]/usr/cntlSINWP_CONTAINER/shellcont/shell/shellcont[0]/shell").topNode = "         25"
+session.findById("wnd[0]/usr/cntlSINWP_CONTAINER/shellcont/shell/shellcont[1]/shell/shellcont[0]/shell").pressToolbarButton "&FIND"
+session.findById("wnd[1]/usr/txtGS_SEARCH-VALUE").Text = Nfs
+session.findById("wnd[1]/usr/txtGS_SEARCH-VALUE").caretPosition = 6
+session.findById("wnd[1]/tbar[0]/btn[0]").press
+session.findById("wnd[1]/tbar[0]/btn[12]").press
+session.findById("wnd[0]/usr/cntlSINWP_CONTAINER/shellcont/shell/shellcont[1]/shell/shellcont[0]/shell").selectedRows = "6"
+session.findById("wnd[0]/usr/cntlSINWP_CONTAINER/shellcont/shell/shellcont[1]/shell/shellcont[0]/shell").doubleClickCurrentCell
+session.findById("wnd[0]/usr/tabsSO33_TAB1/tabpTAB1/ssubSUB1:SAPLSO33:1100/cntlCONTROL/shellcont/shell").sapEvent "attachments", "", "sapevent:ATTA002"
+session.findById("wnd[0]/usr/tabsSO33_TAB1/tabpTAB1/ssubSUB1:SAPLSO33:1100/cntlCONTROL/shellcont/shell").sapEvent "attachments", "", "sapevent:ATTA001"
+session.findById("wnd[0]/tbar[0]/btn[3]").press
+session.findById("wnd[0]/usr/cntlSINWP_CONTAINER/shellcont/shell/shellcont[0]/shell").selectedNode = "         50"
+session.findById("wnd[0]/tbar[0]/btn[3]").press
+
+i = i + 1
+      
+Wend
+
+
+
+End Sub
